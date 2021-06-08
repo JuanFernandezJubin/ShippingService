@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { ShippingBusinessController } from '../businessController/shipping.businessController';
+import Shipping from '../models/shipping.model';
 
 export class ShippingRouteController {
     private shippingBusinessController: ShippingBusinessController;
@@ -8,7 +9,40 @@ export class ShippingRouteController {
         this.shippingBusinessController = shippingBusinessController;
     }
 
-    public addShipping = (req: Request, res: Response) => {
+    public addShipping = async (req: Request, res: Response) => {
+        
+        const {
+            customer,
+            descrip,
+            origin_lat,
+            origin_long,
+            end_lat,
+            end_long
+        } = req.body;
+        console.log(req.body)
+
+        if (!customer || !descrip || !origin_lat || !origin_long || !end_lat || !end_long) {
+            return res.status(400).send({ message: 'All the fields are mandatory' });
+        };
+
+        try {
+            
+            const newShipping = await this.shippingBusinessController.addNewShipping({
+                customer,
+                descrip,
+                origin_lat,
+                origin_long,
+                end_lat,
+                end_long,
+                status: 'Pending'
+            });
+
+            return res.status(200).send(newShipping);
+        
+        } catch (err) {
+            return res.status(400).send({ message: 'Error creating a new shipping' })
+        }
+
 
     }
 
@@ -22,4 +56,6 @@ export class ShippingRouteController {
         const { newShipping } = req.body;
         return this.shippingBusinessController.editShipping();
     }
+
+
 }

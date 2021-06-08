@@ -12,7 +12,7 @@ export class Routes {
     private configRoutes(app: Express) {
         app.route('/shipping/:id')
             .get(this.routeController.getShipping);
-        app.route('/shipping/:id')
+        app.route('/shipping')
             .post(this.routeController.addShipping);
         app.route('/shipping/:id')
             .put(this.routeController.updateShipping)
