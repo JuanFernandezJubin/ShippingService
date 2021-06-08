@@ -1,12 +1,10 @@
 
 import Shipping from '../models/shipping.model';
-import { ShippingDto } from '../dto/shipping.dto';
 
 export class ShippingRepository {
     //Register a new Shipping to db
     public async addNewShippingToDb(shipping: any) {
-    
-    console.log(shipping.aprox_distance)
+
         const newShipping = await Shipping.create({
             customer: shipping.customer,
             descrip: shipping.descrip,
@@ -20,6 +18,8 @@ export class ShippingRepository {
             aprox_distance: shipping.aprox_distance,
         })
 
+        if(!newShipping) throw new Error('Error creating a new shipping');
+        
         return newShipping
     };
 
@@ -29,9 +29,9 @@ export class ShippingRepository {
     };
 
     //See the status of the shipping || Return customer + description + status + distance
-    public getStatusFromDb(shippingId: string) : ShippingDto{
-        const shippingDto = new ShippingDto();
-        shippingDto.setDto("John" ,"Desc" , "estado",2);
-        return shippingDto;
+    public async getStatusFromDb(shippingId: string) : Promise<Shipping> {
+            const shipping = await Shipping.findByPk(shippingId);
+            if(!shipping) throw new Error('We cant find this shipping');
+            return shipping;
     }
 }

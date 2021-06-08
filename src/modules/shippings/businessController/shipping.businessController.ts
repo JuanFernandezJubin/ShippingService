@@ -19,8 +19,11 @@ export class ShippingBusinessController {
         return this.shippingRepository.addNewShippingToDb(shipping)
     };
 
-    public async editShipping(){
-
+    public async editShipping(shippingToModify: any){
+        console.log(shippingToModify.id)
+        console.log(shippingToModify.status)
+        console.log(shippingToModify.type)
+        return 'asdasd'
     };
 
     public async getStatus(shippingId : string){

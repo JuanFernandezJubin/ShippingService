@@ -111,7 +111,7 @@ export default class Shipping extends Model implements ShippingI {
     })
     aprox_distance!: number;
 
-    @AllowNull(false)
+    @AllowNull(true)
     @Column({
         type: DataType.DATE
     })

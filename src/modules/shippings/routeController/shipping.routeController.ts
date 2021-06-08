@@ -10,7 +10,7 @@ export class ShippingRouteController {
     }
 
     public addShipping = async (req: Request, res: Response) => {
-        
+
         const {
             customer,
             descrip,
@@ -19,14 +19,14 @@ export class ShippingRouteController {
             end_lat,
             end_long
         } = req.body;
-        console.log(req.body)
+
 
         if (!customer || !descrip || !origin_lat || !origin_long || !end_lat || !end_long) {
             return res.status(400).send({ message: 'All the fields are mandatory' });
         };
 
         try {
-            
+
             const newShipping = await this.shippingBusinessController.addNewShipping({
                 customer,
                 descrip,
@@ -34,27 +34,64 @@ export class ShippingRouteController {
                 origin_long,
                 end_lat,
                 end_long,
-                status: 'Pending'
+                status: 'Pendiente'
             });
 
             return res.status(200).send(newShipping);
-        
+
         } catch (err) {
-            return res.status(400).send({ message: 'Error creating a new shipping' })
+            return res.status(400).send({ message: err.message });
         }
 
 
     }
 
-    public getShipping = (req: Request, res: Response) => {
+    public getShipping = async (req: Request, res: Response) => {
         const { id } = req.params;
-        return res.json(this.shippingBusinessController.getStatus(id));
+
+        if (!id) return res.status(400).send({ message: 'id is mandatory' });
+
+        try {
+            const shipping = await this.shippingBusinessController.getStatus(id)
+            return res.status(200).send(shipping);
+        } catch (err) {
+            return res.status(400).send({ message: err.message })
+        }
     }
 
-    public updateShipping = (req: Request, res: Response) => {
+    public updateShipping = async (req: Request, res: Response) => {
+
         const { id } = req.params;
-        const { newShipping } = req.body;
-        return this.shippingBusinessController.editShipping();
+        const { current_lat, current_long, status } = req.body;
+
+        if (!current_lat && !current_long && status) {
+            try {
+                const shippingEdited = await this.shippingBusinessController.editShipping({ id, status, type: '1' });
+                return res.status(200).send(shippingEdited);
+            } catch (err) {
+                return res.status(400).send({ message: err.message })
+            }
+        }
+
+        if (current_lat && current_long && !status) {
+            try {
+                const shippingEdited = await this.shippingBusinessController.editShipping({ id, current_lat, current_long, type: '2' });
+                return res.status(200).send(shippingEdited);
+            } catch (err) {
+                return res.status(400).send({ message: err.message })
+            }
+        }
+
+        if (current_long && current_lat && status){
+            try {
+                const shippingEdited = await this.shippingBusinessController.editShipping({ id, status, current_lat, current_long, type: '3' });
+                return res.status(200).send(shippingEdited);
+            } catch (err) {
+                return res.status(400).send({ message: err.message })
+            }
+        }
+
+        return res.status(400).send({ message: 'Absence of required fields' });
     }
 
 
