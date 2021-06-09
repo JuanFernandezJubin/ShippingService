@@ -79,7 +79,7 @@ export class ShippingRouteController {
         if (current_lat && current_long && !status) {
             try {
                 const shippingEdited = await this.shippingBusinessController.editShipping({
-                    id, current_lat, current_long, status: TRACKING.IN_PROCESS, type: TRACKING.TYPE.SECOND_TYPE
+                    id, current_lat, current_long, type: TRACKING.TYPE.SECOND_TYPE
 
                 });
 

@@ -69,12 +69,15 @@ export class ShippingBusinessController {
                     return finalDto;
                 }
 
-                return this.shippingRepository.updateShipping({
-                    id: sToModify.id,
-                    current_lat: sToModify.current_lat,
-                    current_long: sToModify.current_long,
-                    status: sToModify.status,
-                });
+                if(this.testStatus(sToModify.status)){
+                    return this.shippingRepository.updateShipping({
+                        id: sToModify.id,
+                        current_lat: sToModify.current_lat,
+                        current_long: sToModify.current_long,
+                        status: TRACKING.IN_PROCESS,
+                    });
+                }
+                throw new Error ('Error in the status of the shipment')
             }
 
         }
@@ -85,6 +88,13 @@ export class ShippingBusinessController {
         const shDto = new ShippingDto();
         shDto.setDto(sToConvert);
         return shDto;
+    }
+
+    private  testStatus(status: string): Boolean{
+        const statusArr = Object.values(TRACKING)
+        console.log(status)
+        if(statusArr.indexOf(status) === 0 || !status) return true;
+        return false;
     }
 
 
