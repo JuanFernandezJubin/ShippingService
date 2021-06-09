@@ -8,19 +8,19 @@ This project runs using Node v12.22.1 and mysql 8.0.25
 
 <img src="./readmeAssets/architecture.jpeg" >
 
-### 1) Within each module(in this case we only have 1 Module) there is a router that is responsible for correctly managment of the request, working between the APP and the Router Controller.
+##### 1) Within each module(in this case we only have 1 Module) there is a router that is responsible for correctly managment of the request, working between the APP and the Router Controller.
 
 <br>
 
-### 2) Our Router controller handles our request, and will return the responses, with their corresponding status(200 OK || 400 Error). Its connected with our Business Controller.
+##### 2) Our Router controller handles our request, and will return the responses, with their corresponding status(200 OK || 400 Error). Its connected with our Business Controller.
 
 <br>
 
-### 3) Our Business Controller is where we apply our Business Logic.Its the only one who can call our repositories method. When the Business Controller gets a reponse from our repository,transforms that reponse into an DTO and send it to the Router Controller.
+##### 3) Our Business Controller is where we apply our Business Logic.Its the only one who can call our repositories method. When the Business Controller gets a reponse from our repository,transforms that reponse into an DTO and send it to the Router Controller.
 
 <br>
 
-### 4) The Repository is the last layer of our App. Its the only one who has direct access to the database through queries.
+##### 4) The Repository is the last layer of our App. Its the only one who has direct access to the database through queries.
 
 <hr>
 
