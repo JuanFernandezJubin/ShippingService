@@ -17,7 +17,7 @@ export class ShippingBusinessController {
     public async getStatus(shippingId: string): Promise<ShippingDto> {
         const sToReturn = await this.shippingRepository.getStatusFromDb(shippingId) 
         const shDto = new ShippingDto();
-        shDto.setDto(sToReturn.customer,sToReturn.descrip,sToReturn.status,sToReturn.aprox_distance);
+        shDto.setDtoManually(sToReturn.customer,sToReturn.descrip,sToReturn.status,sToReturn.aprox_distance);
         return shDto;
     };
 
@@ -31,7 +31,7 @@ export class ShippingBusinessController {
         
         const sToReturn = await this.shippingRepository.addNewShippingToDb(shipping);
         const shDto = new ShippingDto();
-        shDto.setDto(
+        shDto.setDtoManually(
             sToReturn.customer,
             sToReturn.descrip,
             sToReturn.status,
@@ -55,15 +55,19 @@ export class ShippingBusinessController {
 
                 if (sToModify.status === TRACKING.CANCELED || sToModify.status === TRACKING.IN_PROCESS) 
                     return this.shippingRepository.shipmentChangeStatus(sToModify.id,sToModify.status);
-                if (sToModify.status === TRACKING.DELIVERED)
-                    return this.shippingRepository.shippingDelivered(sToModify.id);
+                if (sToModify.status === TRACKING.DELIVERED){
+                    const finalDto = await this.deliveredAction(sToModify.id)
+                    return finalDto;
+                }
                 
                 throw new Error('We only accept 4 options for status');
             }
             case TRACKING.TYPE.SECOND_TYPE: {
 
-                if (sToModify.status === TRACKING.DELIVERED)
-                    return this.shippingRepository.shippingDelivered(sToModify.id)
+                if (sToModify.status === TRACKING.DELIVERED){
+                    const finalDto = await this.deliveredAction(sToModify.id)
+                    return finalDto;
+                }
 
                 return this.shippingRepository.updateShipping({
                     id: sToModify.id,
@@ -75,6 +79,13 @@ export class ShippingBusinessController {
 
         }
     };
+
+    private async deliveredAction(id: string){
+        const sToConvert = await this.shippingRepository.shippingDelivered(id); 
+        const shDto = new ShippingDto();
+        shDto.setDto(sToConvert);
+        return shDto;
+    }
 
 
 

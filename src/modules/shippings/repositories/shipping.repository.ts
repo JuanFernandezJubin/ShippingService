@@ -68,7 +68,7 @@ export class ShippingRepository {
 
     }
 
-    public async shippingDelivered(shippingId: string): Promise<String> {
+    public async shippingDelivered(shippingId: string): Promise<Shipping> {
 
         const shippingToUpdate = await Shipping.findByPk(shippingId);
         if (!shippingToUpdate) throw new Error('We could not find the shipment');
@@ -77,10 +77,10 @@ export class ShippingRepository {
         shippingToUpdate.current_long = shippingToUpdate.end_long;
         shippingToUpdate.finish_at = new Date();
         shippingToUpdate.aprox_distance = 0;
-        shippingToUpdate.status = 'Entregado';
+        shippingToUpdate.status = TRACKING.DELIVERED;
         await shippingToUpdate.save();
 
-        return 'Shipping Delivered';
+        return shippingToUpdate;
     }
 
 
