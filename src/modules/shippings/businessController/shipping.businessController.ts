@@ -69,6 +69,10 @@ export class ShippingBusinessController {
                     return finalDto;
                 }
 
+                if (sToModify.status === TRACKING.CANCELED){
+                    return this.shippingRepository.shipmentChangeStatus(sToModify.id,sToModify.status)
+                }
+
                 if(this.testStatus(sToModify.status)){
                     return this.shippingRepository.updateShipping({
                         id: sToModify.id,
