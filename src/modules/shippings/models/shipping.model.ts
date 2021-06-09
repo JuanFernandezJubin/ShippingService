@@ -9,7 +9,6 @@ import {
     DataType,
     NotNull
 } from "sequelize-typescript";
-import { DataTypes } from "sequelize/types";
 
 
 export interface ShippingI {

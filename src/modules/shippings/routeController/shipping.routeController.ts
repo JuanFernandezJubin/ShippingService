@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { ShippingBusinessController } from '../businessController/shipping.businessController';
-import Shipping from '../models/shipping.model';
+import { TRACKING } from '../../../utils/const.utils';
 
 export class ShippingRouteController {
     private shippingBusinessController: ShippingBusinessController;
@@ -34,7 +34,7 @@ export class ShippingRouteController {
                 origin_long,
                 end_lat,
                 end_long,
-                status: 'Pendiente'
+                status: TRACKING.PENDING
             });
 
             return res.status(200).send(newShipping);
@@ -48,7 +48,7 @@ export class ShippingRouteController {
 
     public getShipping = async (req: Request, res: Response) => {
         const { id } = req.params;
-
+        
         if (!id) return res.status(400).send({ message: 'id is mandatory' });
 
         try {
@@ -66,7 +66,10 @@ export class ShippingRouteController {
 
         if (!current_lat && !current_long && status) {
             try {
-                const shippingEdited = await this.shippingBusinessController.editShipping({ id, status, type: '1' });
+                const shippingEdited = await this.shippingBusinessController.editShipping({
+                    id, status, type: TRACKING.TYPE.FIRST_TYPE
+                });
+
                 return res.status(200).send(shippingEdited);
             } catch (err) {
                 return res.status(400).send({ message: err.message })
@@ -75,16 +78,23 @@ export class ShippingRouteController {
 
         if (current_lat && current_long && !status) {
             try {
-                const shippingEdited = await this.shippingBusinessController.editShipping({ id, current_lat, current_long, type: '2' });
+                const shippingEdited = await this.shippingBusinessController.editShipping({
+                    id, current_lat, current_long, status: TRACKING.IN_PROCESS, type: TRACKING.TYPE.SECOND_TYPE
+
+                });
+
                 return res.status(200).send(shippingEdited);
             } catch (err) {
                 return res.status(400).send({ message: err.message })
             }
         }
 
-        if (current_long && current_lat && status){
+        if (current_long && current_lat && status) {
             try {
-                const shippingEdited = await this.shippingBusinessController.editShipping({ id, status, current_lat, current_long, type: '3' });
+                const shippingEdited = await this.shippingBusinessController.editShipping({
+                    id, status, current_lat, current_long, type: TRACKING.TYPE.SECOND_TYPE
+                });
+
                 return res.status(200).send(shippingEdited);
             } catch (err) {
                 return res.status(400).send({ message: err.message })
